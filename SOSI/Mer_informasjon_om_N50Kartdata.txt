@@ -1,0 +1,5 @@
+Ønskes mer informasjon om N50 Kartdata finnes dette på Kartverket sine internettsider, www.kartverket.no. Her ligger blant annet: produktspesifikasjon, temaliste, nytt i siste versjon, produktark og leveransetider fremover.
+Direktelink til N50 Kartdata: http://www.kartverket.no/Kart/Kartdata/Vektorkart/N50/
+
+For metadata om N50 Kartdata finnes dette på www.geonorge.no.
+Direktelink til N50 Kartdata: http://www.geonorge.no/geonetwork/srv/nor/metadata.show?id=299&currTab=simple
