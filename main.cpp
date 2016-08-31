@@ -3,6 +3,7 @@
 #include <string>
 #include <cstring>
 #include <cmath>
+#include <vector>
 
 using namespace std;
 
@@ -98,12 +99,49 @@ void ConvertToCurves(string in = "../Oblig1/SOSI/in.sos", string out = "../Oblig
     
     int startCurveLineNum = 0;
     
+    vector<int> vertexAmountArray;
+    
     string str;
     float x, y, z;
     
+    enum State { countCurves, countVertices, write, done };
+    State stage = countCurves;
+    
     if (reader.is_open())
     {
-        while (!reader.eof() && pass < 3)
+        while (!reader.eof() && stage != done)
+        {
+            getline(reader, str);
+            
+            
+            switch (stage)
+            {
+            case countCurves:
+                
+                break;
+            case countVertices:
+                
+                break;
+                
+            case write:
+                
+                break;
+                
+            case done:
+                
+                break;
+            }
+        }
+    }
+    
+    return;
+    
+    
+    
+    
+    if (reader.is_open())
+    {
+        while (!reader.eof() && pass < 4)
         {
             getline(reader, str);
             
@@ -114,11 +152,17 @@ void ConvertToCurves(string in = "../Oblig1/SOSI/in.sos", string out = "../Oblig
             
             if (strncmp(str.c_str(), ".SLUTT", 6) == 0)
             {
-                writer << curveIndex << endl;
+                if (pass == 3)
+                {
+                    writer << curveIndex << endl;
+                    
+                }
                 reader.seekg(startCurveLineNum - 1, ios::beg);
                 pass++;
                 vertexIndex = 0;
                 curveIndex = 0;
+                readingCurves = false;
+                readingVerts = false;
                 
                 continue;
             }
@@ -128,7 +172,6 @@ void ConvertToCurves(string in = "../Oblig1/SOSI/in.sos", string out = "../Oblig
                 if (!foundStartCurve)
                 {
                     foundStartCurve = true;
-                    writer << "Start curve: " << startCurveLineNum << endl;
                 }
                 
                 curveIndex++;
@@ -186,7 +229,7 @@ void ConvertToCurves(string in = "../Oblig1/SOSI/in.sos", string out = "../Oblig
 
 int main(int argc, char *argv[])
 {
-    ConvertToVerticesTest("../Oblig1/SOSI/in.sos");
+    //ConvertToVerticesTest("../Oblig1/SOSI/in.sos");
     
     ConvertToCurves("../Oblig1/SOSI/in.sos");
     
