@@ -7,7 +7,7 @@
 
 using namespace std;
 
-void ConvertToVerticesTest(string in = "../Oblig1/SOSI/in.sos", string out = "../Oblig1/SOSI/vertices.txt")
+void ConvertToVerticesTest(int &minX, int &maxX, int &minY, int &maxY, string in = "../Oblig1/SOSI/in.sos", string out = "../Oblig1/SOSI/vertices.txt")
 {    
     ifstream reader;
     ofstream writer;
@@ -18,7 +18,7 @@ void ConvertToVerticesTest(string in = "../Oblig1/SOSI/in.sos", string out = "..
     string str;
     
     int totalVertices = 0;
-    float unit = 0.001f;
+    float unit = 0.01f;
     int pass = 1;
     float z, y, x;
     
@@ -28,37 +28,79 @@ void ConvertToVerticesTest(string in = "../Oblig1/SOSI/in.sos", string out = "..
         {
             
             getline(reader, str);
+            
+            if (pass == 1 && strncmp(str.c_str(), "...MIN-NØ", 9) == 0)
+            {
+                std::size_t splitPos1 = str.find_first_of(" ");
+                std::size_t splitPos2 = str.find_last_of(" ");
+                
+                string yStr = str.substr((int)splitPos1 + 1, str.length() - (int)splitPos2 + 1);
+                string xStr = str.substr((int)splitPos2 + 1, (int)str.length() - (int)yStr.length() - 1);
+                
+                cout << "Min X: " << xStr << endl;
+                cout << "Min Y: " << yStr << endl;
+            }
+            
+            if (pass == 1 && strncmp(str.c_str(), "...MAX-NØ", 9) == 0)
+            {
+                std::size_t splitPos1 = str.find_first_of(" ");
+                std::size_t splitPos2 = str.find_last_of(" ");
+                
+                string yStr = str.substr((int)splitPos1 + 1, str.length() - (int)splitPos2 + 1);
+                string xStr = str.substr((int)splitPos2 + 1, (int)str.length() - (int)yStr.length() - 1);
+                
+                cout << "Max X: " << xStr << endl;
+                cout << "Max Y: " << yStr << endl << endl;
+                
+                cout << "Set new Min X: ";
+                cin >> minX;
+                
+                cout << "Set new Max X: ";
+                cin >> maxX;
+                
+                cout << "Set new Min Y: ";
+                cin >> minY;
+                
+                cout << "Set new Max Y: ";
+                cin >> maxY;
+            }
+            
             if (pass == 2 && strncmp(str.c_str(), "..HØYDE", 7) == 0)
             {
                 str = str.substr(8, (int)str.length() - 8);
                 z = std::stof(str.c_str(), nullptr);
-//                cout << z << endl;
             }
             else if (strncmp(str.c_str(), "..NØ", 4) == 0)
             {
-                if (pass == 2)
-                {
-                    getline(reader, str);
-                    std:size_t splitPos = str.find(" ");
-                    string yStr = str.substr(0, (int)splitPos);
-                    string xStr = str.substr((int)splitPos + 1, (int)str.length() - (int)yStr.length());
-                    
-                    y = std::stof(yStr.c_str(), nullptr);
-                    x = std::stof(xStr.c_str(), nullptr);
-                    
-    //                cout << y << endl;
-    //                cout << x << endl;
-                    
-                    x = x * unit;
-                    y = y * unit;
-                    z = z * unit;
-                    
-                    writer << "(" << x << ", " << y << ", " << z << ") (0.5, 0.5, 0.5) (1, 0)" << endl;
-                }
+                getline(reader, str);
+                std::size_t splitPos = str.find(" ");
+                string yStr = str.substr(0, (int)splitPos);
+                string xStr = str.substr((int)splitPos + 1, (int)str.length() - (int)yStr.length());
                 
-                if (pass == 1)
+                y = std::stof(yStr.c_str(), nullptr);
+                x = std::stof(xStr.c_str(), nullptr);
+                
+                x = x * unit;
+                y = y * unit;
+                z = z * unit;
+                
+                if (x >= minX &&
+                    x <= maxX &&
+                    y >= minY &&
+                    y <= maxY)
                 {
-                    totalVertices++;
+                    if (pass == 2)
+                    {
+                        x = round((double) x * 1000) / 1000;
+                        y = round((double) y * 1000) / 1000;
+                        z = round((double) z * 1000) / 1000;
+                        writer << fixed;
+                        writer << "(" << x << ", " << y << ", " << z << ") (0.5, 0.5, 0.5) (1, 0)" << endl;
+                    }
+                    else if (pass == 1)
+                    {
+                        totalVertices++;                        
+                    }
                 }
             }
             else if (strncmp(str.c_str(), ".KURVE", 6) == 0)
@@ -255,9 +297,13 @@ void ConvertToCurves(string in = "../Oblig1/SOSI/in.sos", string out = "../Oblig
 
 int main(int argc, char *argv[])
 {
-    ConvertToVerticesTest("../Oblig1/SOSI/in.sos");
+    int minX = 10000;
+    int minY = 6800000;
+    int maxX = 40000;
+    int maxY = 6900000;
+    ConvertToVerticesTest(minX, maxX, minY, maxY, "../Oblig1/SOSI/in.sos");
     
-    ConvertToCurves("../Oblig1/SOSI/in.sos");
+//    ConvertToCurves("../Oblig1/SOSI/in.sos");
     
     return 0;
 }
