@@ -63,7 +63,14 @@ void ConvertToVerticesTest(int &minX, int &maxX, int &minY, int &maxY, string in
                 
                 cout << "Set new Max Y: ";
                 cin >> maxY;
+                
+                //From meters to cm
+                minX *= 100;
+                maxX *= 100;
+                minY *= 100;
+                maxY *= 100;
             }
+            
             
             if (pass == 2 && strncmp(str.c_str(), "..HØYDE", 7) == 0)
             {
@@ -72,17 +79,16 @@ void ConvertToVerticesTest(int &minX, int &maxX, int &minY, int &maxY, string in
             }
             else if (strncmp(str.c_str(), "..NØ", 4) == 0)
             {
+                
                 getline(reader, str);
+                
                 std::size_t splitPos = str.find(" ");
                 string yStr = str.substr(0, (int)splitPos);
                 string xStr = str.substr((int)splitPos + 1, (int)str.length() - (int)yStr.length());
                 
                 y = std::stof(yStr.c_str(), nullptr);
-                x = std::stof(xStr.c_str(), nullptr);
+                x = std::stof(xStr.c_str(), nullptr);                
                 
-                x = x * unit;
-                y = y * unit;
-                z = z * unit;
                 
                 if (x >= minX &&
                     x <= maxX &&
@@ -90,10 +96,25 @@ void ConvertToVerticesTest(int &minX, int &maxX, int &minY, int &maxY, string in
                     y <= maxY)
                 {
                     if (pass == 2)
-                    {
+                    {                        
+                        int xSubAmount = (maxX - minX) / 2;
+                        int ySubAMount = (maxY - minY) / 2;
+                        
+                        //Move to origin
+                        x = x - maxX + xSubAmount;
+                        y = y - maxY + ySubAMount;
+                        
+                        //From cm to meters
+                        x = x * unit;
+                        y = y * unit;
+                        z = z * unit;
+                        
+
+                        
                         x = round((double) x * 1000) / 1000;
                         y = round((double) y * 1000) / 1000;
                         z = round((double) z * 1000) / 1000;
+                        
                         writer << fixed;
                         writer << "(" << x << ", " << y << ", " << z << ") (0.5, 0.5, 0.5) (1, 0)" << endl;
                     }
@@ -123,7 +144,7 @@ void ConvertToVerticesTest(int &minX, int &maxX, int &minY, int &maxY, string in
     cout << "Total vertices converted: " << totalVertices << endl;
 }
 
-void ConvertToCurves(string in = "../Oblig1/SOSI/in.sos", string out = "../Oblig1/SOSI/curves.txt")
+void ConvertToCurves(float minX, float maxX, float minY, float maxY, string in = "../Oblig1/SOSI/in.sos", string out = "../Oblig1/SOSI/curves.txt")
 {
     ifstream reader;
         ofstream writer;
@@ -137,7 +158,7 @@ void ConvertToCurves(string in = "../Oblig1/SOSI/in.sos", string out = "../Oblig
         float x, y, z;
         vector<int> vertexAmountList;
         
-        float unit = 0.001f;
+        float unit = 0.01f;
         
         string str;        
         
@@ -274,6 +295,12 @@ void ConvertToCurves(string in = "../Oblig1/SOSI/in.sos", string out = "../Oblig
                                 y = std::stof(yStr.c_str(), nullptr);
                                 x = std::stof(xStr.c_str(), nullptr);
                                 
+                                int xSubAmount = (maxX - minX) / 2;
+                                int ySubAMount = (maxY - minY) / 2;
+                                
+                                x = x - maxX + xSubAmount;
+                                y = y - maxY + ySubAMount;
+                                
                                 x *= unit;
                                 y *= unit;
                                 z *= unit;                
@@ -298,12 +325,12 @@ void ConvertToCurves(string in = "../Oblig1/SOSI/in.sos", string out = "../Oblig
 int main(int argc, char *argv[])
 {
     int minX = 10000;
-    int minY = 6800000;
     int maxX = 40000;
+    int minY = 6800000;
     int maxY = 6900000;
     ConvertToVerticesTest(minX, maxX, minY, maxY, "../Oblig1/SOSI/in.sos");
     
-//    ConvertToCurves("../Oblig1/SOSI/in.sos");
+    ConvertToCurves(minX, maxX, minY, maxY, "../Oblig1/SOSI/in.sos");
     
     return 0;
 }
